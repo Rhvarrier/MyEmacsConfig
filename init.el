@@ -47,3 +47,28 @@
 	 ("\\.md\\'" . markdown-mode)
 	 ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "pandoc"))
+;; Helm autocomplete
+(use-package helm
+  :ensure t
+  :bind
+  (("M-x" . helm-M-x)
+   ("C-x C-f" . helm-find-files)
+   :map helm-map
+   ("C-j" . helm-next-line)
+   ("C-k" . helm-previous-line))
+  )
+
+;; C++ ide packages
+
+(use-package flycheck
+  :ensure t
+  )
+
+(use-package rtags
+  :ensure t
+  )
+
+(use-package cmake-ide
+  :ensure t
+  )
+(cmake-ide-setup)

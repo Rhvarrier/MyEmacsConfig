@@ -13,7 +13,7 @@
  '(frame-background-mode 'dark)
  '(inhibit-startup-screen t)
  '(package-selected-packages
-   '(pyenv-mode ox-pandoc markdown-mode magit elpy use-package))
+   '(helm flycheck cmake-ide rtags pyenv-mode ox-pandoc markdown-mode magit elpy use-package))
  '(package-user-dir "~/.emacs.d/elpa")
  '(python-shell-interpreter "python3")
  '(save-interprogram-paste-before-kill t)

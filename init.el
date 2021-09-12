@@ -1,6 +1,8 @@
 (setq user-emacs-directory (file-truename "~/emacs.d"))
 (setq custom-file "~/.emacs.d/custom.el")
+(setq custom-functions-file "~/.emacs.d/custom-functions.el")
 (load-file custom-file)
+(load-file custom-functions-file)
 (require 'package)
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
@@ -49,26 +51,45 @@
   :init (setq markdown-command "pandoc"))
 ;; Helm autocomplete
 (use-package helm
+  :preface (require 'helm-config)
   :ensure t
   :bind
   (("M-x" . helm-M-x)
    ("C-x C-f" . helm-find-files)
+   ("C-x b" . helm-buffers-list)
    :map helm-map
    ("C-j" . helm-next-line)
    ("C-k" . helm-previous-line))
   )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C++ ide packages
-
-(use-package flycheck
-  :ensure t
-  )
 
 (use-package rtags
   :ensure t
+  :custom
+  (rtags-autostart-diagnostics t "Start async pcss to receive warnings/errors")
+  (rtags-completion-enabled t)
+  :init
+  (rtags-enable-standard-keybindings)
+  (rtags-diagnostics)
+  )
+
+(use-package company
+  :ensure t
+  :config (delete 'company-backends 'company-clang))
+  :hook (('after-init-hook . 'global-company-mode))
+  )
+(use-package        
+(use-package cmake-mode
+  :ensure t
+  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
+	 ("\\.cmake\\'" . cmake-mode))
   )
 
 (use-package cmake-ide
   :ensure t
+  :init
+  (cmake-ide-setup)
+  :bind ("C-c k" . cmake-ide-compile)
   )
-(cmake-ide-setup)

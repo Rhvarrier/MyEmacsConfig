@@ -29,17 +29,19 @@
   (unless (package-installed-p package)
     (package-install package)))
 
-;; install elpy package for python
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Version Control
 
 ;; install magit for git repo management
 (use-package magit
   :ensure t
   :init
   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Documentation
 
 ;; install markdown mode for emacs
 (use-package markdown-mode
@@ -49,6 +51,18 @@
 	 ("\\.md\\'" . markdown-mode)
 	 ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "pandoc"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Python packages
+
+;; install elpy package for python
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; General
+
 ;; Helm autocomplete
 (use-package helm
   :preface (require 'helm-config)
@@ -61,6 +75,45 @@
    ("C-j" . helm-next-line)
    ("C-k" . helm-previous-line))
   )
+
+
+;; install markdown mode for emacs
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+	 ("\\.md\\'" . markdown-mode)
+	 ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "pandoc"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Python packages
+
+;; install elpy package for python
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; General
+
+;; Helm autocomplete
+(use-package helm
+  :preface (require 'helm-config)
+  :ensure t
+  :bind
+  (("M-x" . helm-M-x)
+   ("C-x C-f" . helm-find-files)
+   ("C-x b" . helm-buffers-list)
+   :map helm-map
+   ("C-j" . helm-next-line)
+   ("C-k" . helm-previous-line))
+  )
+
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C++ ide packages
@@ -77,10 +130,10 @@
 
 (use-package company
   :ensure t
-  :config (delete 'company-backends 'company-clang))
-  :hook (('after-init-hook . 'global-company-mode))
+;;  :config (delete 'company-backends 'company-clang))
+;;  :hook (('after-init-hook . 'global-company-mode))
   )
-(use-package        
+  
 (use-package cmake-mode
   :ensure t
   :mode (("CMakeLists\\.txt\\'" . cmake-mode)
@@ -92,4 +145,8 @@
   :init
   (cmake-ide-setup)
   :bind ("C-c k" . cmake-ide-compile)
+  :hook electric-pair-mode
   )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Elisp packages
+(add-hook 'lisp-mode-hook electric-pair-mode)

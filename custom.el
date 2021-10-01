@@ -18,7 +18,7 @@
  '(helm-split-window-inside-p t)
  '(inhibit-startup-screen t)
  '(package-selected-packages
-   '(electric-pair-mode helm-config cmake-mode helm flycheck cmake-ide rtags pyenv-mode ox-pandoc markdown-mode magit elpy use-package))
+   '(flycheck-irony company-irony irony electric-pair-mode helm-config cmake-mode helm flycheck cmake-ide rtags pyenv-mode ox-pandoc markdown-mode magit elpy use-package))
  '(package-user-dir "~/.emacs.d/elpa")
  '(python-shell-interpreter "python3")
  '(save-interprogram-paste-before-kill t)

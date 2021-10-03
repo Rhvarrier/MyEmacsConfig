@@ -1,9 +1,9 @@
 ;; Set emacs user directory
 (setq user-emacs-directory (file-truename "~/emacs.d"))
-(setq custom-file "~/.emacs.d/custom.el")
 ;;(setq custom-functions-file "~/.emacs.d/custom-functions.el")
-(load-file custom-file)
 ;;(load-file custom-functions-file)
+
+(defalias 'yes-or-no-p 'y-or-n-p)
 (require 'package)
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
@@ -31,6 +31,63 @@
     (package-install package)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; General
+
+;; Helm autocomplete
+(use-package helm
+  :preface (require 'helm-config)
+  :ensure t
+  :bind
+  (("M-x" . helm-M-x)
+   ("C-x C-f" . helm-find-files)
+   ("C-x b" . helm-buffers-list)
+   :map helm-map
+   ("C-j" . helm-next-line)
+   ("C-k" . helm-previous-line))
+  )
+
+;; Treemacs
+(use-package treemacs
+  :ensure t
+  :init
+  )
+(use-package treemacs-magit
+  :after (treemacs magit)
+  :ensure t)
+
+;; install markdown mode for emacs
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+	 ("\\.md\\'" . markdown-mode)
+	 ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "pandoc"))
+
+(use-package yasnippet
+  :ensure t
+  :config
+  (use-package yasnippet-snippets
+    :ensure t)
+  (yas-global-mode t)
+  (define-key yas-minor-mode-map (kbd "<tab>") nil)
+  (define-key yas-minor-mode-map (kbd "C-<tab>") #'yas-expand)
+  (add-to-list #'yas-snippet-dirs "my-personal-snippets")
+  (yas-reload-all)
+  (setq yas-prompt-functions '(yas-ido-prompt))
+  (defun help/yas-after-exit-snippet-hook-fn ()
+    (prettify-symbols-mode)
+    (prettify-symbols-mode))
+  (add-hook 'yas-after-exit-snippet-hook #'help/yas-after-exit-snippet-hook-fn)
+  :diminish yas-minor-mode)
+
+(use-package flycheck
+  :ensure t
+  :init
+  (global-flycheck-mode)
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Version Control
 
@@ -44,7 +101,6 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;; Documentation
 
 ;; install markdown mode for emacs
@@ -56,40 +112,6 @@
 	 ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "pandoc"))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Python packages
-
-;; install elpy package for python
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; General
-
-;; Helm autocomplete
-(use-package helm
-  :preface (require 'helm-config)
-  :ensure t
-  :bind
-  (("M-x" . helm-M-x)
-   ("C-x C-f" . helm-find-files)
-   ("C-x b" . helm-buffers-list)
-   :map helm-map
-   ("C-j" . helm-next-line)
-   ("C-k" . helm-previous-line))
-  )
-
-
-;; install markdown mode for emacs
-(use-package markdown-mode
-  :ensure t
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-	 ("\\.md\\'" . markdown-mode)
-	 ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "pandoc"))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Python packages
@@ -99,79 +121,11 @@
   :ensure t
   :init
   (elpy-enable))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; General
-
-;; Helm autocomplete
-(use-package helm
-  :preface (require 'helm-config)
-  :ensure t
-  :bind
-  (("M-x" . helm-M-x)
-   ("C-x C-f" . helm-find-files)
-   ("C-x b" . helm-buffers-list)
-   :map helm-map
-   ("C-j" . helm-next-line)
-   ("C-k" . helm-previous-line))
-  )
-
-
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C++ ide packages
 (add-hook 'c-mode-hook  electric-pair-mode)
 (add-hook 'c++-mode-hook  electric-pair-mode)
-
-;; (use-package rtags
-;;   :ensure t
-;;   :custom
-;;   (rtags-autostart-diagnostics t "Start async pcss to receive warnings/errors")
-;;   (rtags-completion-enabled t)
-;;   :init
-;;   (rtags-enable-standard-keybindings)
-;;   (rtags-diagnostics)
-;;   )
-
-;; (use-package irony
-;;   :ensure t
-;;   :config
-;;   (use-package company-irony
-;;     :ensure t
-;;     :config
-;;     (add-to-list 'company-backends 'company-irony))
-;;   (use-package company-irony-c-headers
-;;     :ensure t
-;;     :config
-;;     (add-to-list 'company-backends 'company-irony-c-headers))
-;;   (add-hook 'c++-mode-hook 'irony-mode)
-;;   (add-hook 'c-mode-hook 'irony-mode)
-;;   (add-hook 'objc-mode-hook 'irony-mode)
-;;   ;; replace the `completion-at-point' and `complete-symbol' bindings in
-;;   ;; irony-mode's buffers by irony-mode's function
-;;   (defun my-irony-mode-hook ()
-;;     (define-key irony-mode-map [remap completion-at-point]
-;;       'irony-completion-at-point-async)
-;;     (define-key irony-mode-map [remap complete-symbol]
-;;       'irony-completion-at-point-async))
-;;   (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-;;   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
-
- (use-package company
-   :ensure t
-   :init
-  (global-company-mode)
-  :bind (("<backtab>" . company-complete-common-or-cycle))
-)
-
-;; (use-package flycheck-irony
-;;     :ensure t
-;;     :config
-;;     (eval-after-load 'flycheck
-;;     '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
-;;     )
 
 (use-package lsp-mode
   :ensure t
@@ -180,8 +134,24 @@
   :hook (
 	 (c-mode . lsp)
 	 (c++-mode . lsp)
+	 (lsp-mode . lsp-enable-which-key-integration)
 	 )
   :commands lsp
+  )
+
+(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+
+(use-package company
+   :ensure t
+   :init
+  (global-company-mode)
+  :bind (("<backtab>" . company-complete-common-or-cycle))
   )
 
 (use-package cmake-mode
@@ -190,13 +160,10 @@
 	 ("\\.cmake\\'" . cmake-mode))
   )
 
- ;; (use-package cmake-ide
- ;;  :ensure t
- ;;  :init
- ;;  (cmake-ide-setup)
- ;;  :bind ("C-c k" . cmake-ide-compile)
- ;;  :hook electric-pair-mode
- ;;  )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Elisp packages
-;;(add-hook 'lisp-mode-hook electric-pair-mode)
+(add-hook 'lisp-mode-hook electric-pair-mode)
+
+;; load customize file at the end 
+(setq custom-file "~/.emacs.d/custom.el")
+(load-file custom-file)

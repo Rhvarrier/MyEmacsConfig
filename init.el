@@ -50,19 +50,16 @@
 (use-package treemacs
   :ensure t
   :init
+    :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ;; ("C-x t B"   . treemacs-bookmark)
+	;;("C-x t C-t" . treemacs-find-file)
+        ;;("C-x t M-t" . treemacs-find-tag))
+	)
   )
-(use-package treemacs-magit
-  :after (treemacs magit)
-  :ensure t)
-
-;; install markdown mode for emacs
-(use-package markdown-mode
-  :ensure t
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-	 ("\\.md\\'" . markdown-mode)
-	 ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "pandoc"))
 
 (use-package yasnippet
   :ensure t
@@ -87,6 +84,25 @@
   (global-flycheck-mode)
   )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Orgmode
+
+(use-package org
+  )
+
+(use-package org-noter
+  :ensure t
+  :bind
+  ("C-c n" . org-noter)
+  )
+
+(use-package pdf-tools
+  :ensure t
+  :config
+  (pdf-tools-install)
+  (setq-default pdf-view-display-size 'fit-page)
+  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Version Control
@@ -99,6 +115,10 @@
   (("C-x g" . magit-status)
    )
   )
+
+(use-package treemacs-magit
+  :after (treemacs magit)
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Documentation
@@ -141,7 +161,9 @@
 
 (use-package lsp-ui :commands lsp-ui-mode)
 (use-package lsp-ui :commands lsp-ui-mode)
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+(use-package lsp-treemacs
+  :ensure t
+  :commands lsp-treemacs-errors-list)
 (use-package which-key
   :ensure t
   :config

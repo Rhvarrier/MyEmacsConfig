@@ -1,8 +1,8 @@
 ;; Set emacs user directory
-(setq user-emacs-directory (file-truename "~/emacs.d"))
+(setq user-emacs-directory (file-truename "~/.emacs.d"))
 ;;(setq custom-functions-file "~/.emacs.d/custom-functions.el")
 ;;(load-file custom-functions-file)
-
+t
 (defalias 'yes-or-no-p 'y-or-n-p)
 (require 'package)
 (add-to-list 'package-archives

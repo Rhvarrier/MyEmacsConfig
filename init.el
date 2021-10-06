@@ -2,7 +2,7 @@
 (setq user-emacs-directory (file-truename "~/emacs.d"))
 ;;(setq custom-functions-file "~/.emacs.d/custom-functions.el")
 ;;(load-file custom-functions-file)
-
+(defalias 'init '(find-file user-init-file))
 (defalias 'yes-or-no-p 'y-or-n-p)
 (require 'package)
 (add-to-list 'package-archives
@@ -30,6 +30,37 @@
   (unless (package-installed-p package)
     (package-install package)))
 
+;; persistant session
+(use-package session
+  :ensure t
+  :config
+  (add-hook 'after-init-hook 'session-initialize)
+  )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Aesthetic
+
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-one t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
+
+(use-package rainbow-delimiters
+  :ensure t
+  :hook
+  (prog-mode . rainbow-delimiters)
+  )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General
 
@@ -83,6 +114,12 @@
   :init
   (global-flycheck-mode)
   )
+
+(use-package vterm
+  :ensure t
+  :config
+  (defalias 'sh 'vterm)
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Orgmode

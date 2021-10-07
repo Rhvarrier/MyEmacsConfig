@@ -54,12 +54,6 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-
-(use-package rainbow-delimiters
-  :ensure t
-  :hook
-  (prog-mode . rainbow-delimiters)
-  )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General
 

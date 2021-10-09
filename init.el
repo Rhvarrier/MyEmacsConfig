@@ -29,6 +29,8 @@
   (unless (package-installed-p package)
     (package-install package)))
 
+(global-set-key (kbd "<kp-enter>") (kbd "RET"))
+
 ;; persistant session
 (use-package session
   :ensure t
@@ -118,12 +120,23 @@
 ;; Orgmode
 
 (use-package org
+  :hook
+  (org-mode . visual-line-mode)
+  :config
+  (setq org-startup-indented nil)
   )
 
+(use-package org-bullets
+  :ensure t
+  :hook
+  (org-mode . org-bullets-mode)
+  )
 (use-package org-noter
   :ensure t
   :bind
   ("C-c n" . org-noter)
+  :mode
+  ("\\.pdf\\'" . org-noter-mode)
   )
 
 (use-package pdf-tools

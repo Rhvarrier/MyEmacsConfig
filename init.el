@@ -40,6 +40,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Aesthetic
 
+;; Disabling menu bar and tool bar
+(menu-bar-mode -1)
+(tool-bar-mode -1) 
 (use-package doom-themes
   :ensure t
   :config

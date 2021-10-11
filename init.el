@@ -42,7 +42,9 @@
 
 ;; Disabling menu bar and tool bar
 (menu-bar-mode -1)
-(tool-bar-mode -1) 
+(tool-bar-mode -1)
+;; Start fullscreen (cross-platf)
+(add-hook 'window-setup-hook 'toggle-frame-fullscreen t)
 (use-package doom-themes
   :ensure t
   :config

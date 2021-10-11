@@ -33,7 +33,7 @@
  '(objed-cursor-color "#ff665c")
  '(org-noter-always-create-frame nil)
  '(package-selected-packages
-   '(multiple-cursors multiple-cursor multi-cursor org-download org-attach-screenshot org-bullets org-autolist rainbow-delimiters session doom-themes vterm pdftools org-brain org-pdfview org-noter-pdftools org-pdftools org-noter lsp-treemacs treemacs-magit treemacs lsp-ui yasnippet-snippets lsp-mode flycheck-irony company-irony irony electric-pair-mode helm-config cmake-mode helm flycheck cmake-ide rtags pyenv-mode ox-pandoc markdown-mode magit elpy use-package))
+   '(treemacs-icons-dired treemacs-projectile projectile treemacs-all-the-icons multiple-cursors multiple-cursor multi-cursor org-download org-attach-screenshot org-bullets org-autolist rainbow-delimiters session doom-themes vterm pdftools org-brain org-pdfview org-noter-pdftools org-pdftools org-noter lsp-treemacs treemacs-magit treemacs lsp-ui yasnippet-snippets lsp-mode flycheck-irony company-irony irony electric-pair-mode helm-config cmake-mode helm flycheck cmake-ide rtags pyenv-mode ox-pandoc markdown-mode magit elpy use-package))
  '(package-user-dir "~/.emacs.d/elpa")
  '(pdf-tools-enabled-modes
    '(pdf-history-minor-mode pdf-isearch-minor-mode pdf-links-minor-mode pdf-misc-minor-mode pdf-outline-minor-mode pdf-misc-size-indication-minor-mode pdf-misc-menu-bar-minor-mode pdf-annot-minor-mode pdf-sync-minor-mode pdf-misc-context-menu-minor-mode pdf-cache-prefetch-minor-mode pdf-occur-global-minor-mode pdf-virtual-global-minor-mode))

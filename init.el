@@ -116,7 +116,7 @@
   (defalias 'sh 'vterm)
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Orgmode
 
 (use-package org
@@ -124,6 +124,8 @@
   (org-mode . visual-line-mode)
   :config
   (setq org-startup-indented nil)
+  (setq org-startup-numerated t)
+  (setq org-image-actual-width (list 200))
   )
 
 (use-package org-bullets
@@ -131,6 +133,16 @@
   :hook
   (org-mode . org-bullets-mode)
   )
+
+(use-package org-download
+  :ensure t
+  :hook
+  (org-mode . org-download-enable)
+  :bind
+  ("<f6> y" . org-download-clipboard)
+  
+
+)
 (use-package org-noter
   :ensure t
   :bind

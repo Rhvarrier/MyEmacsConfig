@@ -1,6 +1,4 @@
-/.#custom-functions.el
-/custom-functions.el~
-/custom.el~
 /.dir-locals.el~
-/#custom.el#
-/.#custom.el
+[#]*
+*[#]*
+*~

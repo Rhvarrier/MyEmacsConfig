@@ -1,0 +1,294 @@
+#+TITLE: My Emacs Settings
+#+AUTHOR: Rahul Hari
+#+LANGUAGE: 'en'
+* Initialisations
+** Messages buffer customisation
+   #+begin_src emacs-lisp
+     (defun sh/current-time-microseconds ()
+       "Return the current time formatted to include microseconds."
+       (let* ((nowtime (current-time))
+	      (now-ms (nth 2 nowtime)))
+	 (concat (format-time-string "[%Y-%m-%dT%T" nowtime) (format ".%d]" now-ms))))
+
+     (defun sh/ad-timestamp-message (FORMAT-STRING &rest args)
+       "Advice to run before `message' that prepends a timestamp to each message.
+
+     Activate this advice with:
+     (advice-add 'message :before 'sh/ad-timestamp-message)"
+       (unless (string-equal FORMAT-STRING "%s%s")
+	 (let ((deactivate-mark nil)
+	       (inhibit-read-only t))
+	   (with-current-buffer "*Messages*"
+	     (goto-char (point-max))
+	     (if (not (bolp))
+	       (newline))
+	     (insert (sh/current-time-microseconds) " ")))))
+
+     (advice-add 'message :before 'sh/ad-timestamp-message)
+   #+end_src
+** User directories and user files
+*** Setting Emacs user directory. This directory contains all the settings as well as the elpa packages installed by Emacs
+    #+BEGIN_SRC emacs-lisp
+      (setq user-emacs-directory (file-truename "~/.emacs.d"))
+    #+END_SRC
+** Inialialize packages
+   Setting packages.el and its archieves. After adding achieve URL, the package cache needs to be refreshed.
+    #+begin_src lisp
+      (require 'package)
+      (add-to-list 'package-archives
+		   '("melpa" . "https://melpa.org/packages/") t)
+      (add-to-list 'package-archives
+		   '("gnu" . "http://elpa.gnu.org/packages/"))
+      (add-to-list 'package-archives
+		   '("org" . "http://orgmode.org/elpa/") t)
+      ;; Comment/uncomment this line to enable MELPA Stable if desired.  See `package-archive-priorities`
+      ;; and `package-pinned-packages`. Most users will not need or want to do this.
+      (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+      (package-initialize)
+
+      ;; update packages list if we are on a new install
+    (unless package-archive-contents
+	(package-refresh-contents))
+
+    #+end_src
+
+** Installing Initial packages.
+   ~use-package~: used for clean package management
+     #+begin_src emacs-lisp
+	 ;; a list of pkgs to programmatically install
+	 ;; ensure installed via package.el
+	 (setq my-package-list '(use-package))
+
+	 ;; programmatically install/ensure installed
+	 ;; pkgs in your personal list
+	 (dolist (package my-package-list)
+	   (unless (package-installed-p package)
+	     (package-install package)))
+    #+end_src
+
+* Global settings
+** Session Management
+   Session package allows to keep persist data between sessions. For more info http://emacs-session.sourceforge.net/
+      #+begin_src emacs-lisp
+	(use-package session
+		:ensure t
+		:config
+		(add-hook 'after-init-hook 'session-initialize)
+	)
+      #+end_src
+** Conveniences
+*** Aliases
+**** Replace ~yes or no~ with the shorter version ~y or n~
+   #+begin_src emacs-lisp
+     (defalias 'yes-or-no-p 'y-or-n-p)
+   #+end_src
+*** Define Global keyboard shortcuts
+**** TODO: F12 : Open init org file from any buffer
+     #+begin_src emacs-lisp
+       (global-set-key (kbd "<f12>") (lambda () (interactive) (find-file user-init-file)))
+     #+end_src
+** Aesthetic
+*** Themes
+    Adding Doom Themes with support for org mode and Treemacs. This theme should later be selected in the ~customize-theme~ option 
+    #+begin_src emacs-lisp
+      (use-package doom-themes
+	:ensure t
+	:config
+	;; Global settings (defaults)
+	(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+	      doom-themes-enable-italic t) ; if nil, italics is universally disabled
+	(load-theme 'doom-one t)
+
+	;; Enable flashing mode-line on errors
+	(doom-themes-visual-bell-config)
+	;; or for treemacs users
+	(setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+	(doom-themes-treemacs-config)
+	;; Corrects (and improves) org-mode's native fontification.
+	(doom-themes-org-config))
+    #+end_src
+    
+;;(setq custom-functions-file "~/.emacs.d/custom-functions.el")
+;;(load-file custom-functions-file)
+
+
+** Autocomplete
+*** Helm Config
+    Helm config for autocomplete with find-file, M-x integations
+    #+BEGIN_SRC emacs-lisp
+      ;; Helm autocomplete
+      (use-package helm
+	:preface (require 'helm-config)
+	:ensure t
+	:bind
+	(("M-x" . helm-M-x)
+	 ("C-x C-f" . helm-find-files)
+	 ("C-x b" . helm-buffers-list)
+	 :map helm-map
+	 ("C-j" . helm-next-line)
+	 ("C-k" . helm-previous-line))
+	)
+    #+END_SRC
+Yasnippet for autocompleting snippets
+   #+BEGIN_SRC emacs-lisp
+     (use-package yasnippet
+       :ensure t
+       :config
+       (use-package yasnippet-snippets
+	 :ensure t)
+       (yas-global-mode t)
+       (define-key yas-minor-mode-map (kbd "<tab>") nil)
+       (define-key yas-minor-mode-map (kbd "C-<tab>") #'yas-expand)
+       ;;(add-to-list #'yas-snippet-dirs "my-personal-snippets")
+       (yas-reload-all)
+       (setq yas-prompt-functions '(yas-ido-prompt))
+       (defun help/yas-after-exit-snippet-hook-fn ()
+	 (prettify-symbols-mode)
+	 (prettify-symbols-mode))
+       (add-hook 'yas-after-exit-snippet-hook #'help/yas-after-exit-snippet-hook-fn)
+       :diminish yas-minor-mode)
+   #+END_SRC
+
+* General Tools
+** Content Visualisation
+*** TODO Treemacs
+    Treemacs package allows viualizing contents in tree view with context specific icons 
+  #+BEGIN_SRC emacs-lisp
+    ;; Treemacs
+    (use-package treemacs
+      :ensure t
+      :init
+      :bind
+      (:map global-map
+	    ("M-0"       . treemacs-select-window)
+	    ("C-x t 1"   . treemacs-delete-other-windows)
+	    ("C-x t t"   . treemacs)
+	    ;; ("C-x t B"   . treemacs-bookmark)
+	    ;;("C-x t C-t" . treemacs-find-file)
+	    ;;("C-x t M-t" . treemacs-find-tag))
+	    )
+      )
+  #+END_SRC
+** Terminal
+   Vterm is much better alternative to default Emacs shell and vterm
+   #+BEGIN_SRC emacs-lisp
+     (use-package vterm
+       :ensure t
+       :config
+       (defalias 'sh 'vterm)
+     )
+
+   #+END_SRC
+** Version Control
+
+   Installing Magit for git integration and adding treemacs integation
+   #+BEGIN_SRC emacs-lisp
+     (use-package magit
+       :ensure t
+       :init
+       :bind
+       (("C-x g" . magit-status)
+	)
+       )
+
+     (use-package treemacs-magit
+       :after (treemacs magit)
+       :ensure t)
+#+END_SRC
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Orgmode
+
+(use-package org
+  )
+
+(use-package org-noter
+  :ensure t
+  :bind
+  ("C-c n" . org-noter)
+  )
+
+(use-package pdf-tools
+  :ensure t
+  :config
+  (pdf-tools-install)
+  (setq-default pdf-view-display-size 'fit-page)
+  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Documentation
+
+;; install markdown mode for emacs
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+	 ("\\.md\\'" . markdown-mode)
+	 ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "pandoc"))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Programming
+(add-hook 'prog-mode-hook show-paren-mode)
+(add-hook 'prog  electric-pair-mode)
+
+(use-package flycheck
+  :ensure t
+  :init
+  (global-flycheck-mode)
+  )
+
+
+;; Python packages
+
+;; install elpy package for python
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
+
+;; C++
+(use-package lsp-mode
+  :ensure t
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (
+	 (c-mode . lsp)
+	 (c++-mode . lsp)
+	 (lsp-mode . lsp-enable-which-key-integration)
+	 )
+  :commands lsp
+  )
+
+(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-treemacs
+  :ensure t
+  :commands lsp-treemacs-errors-list)
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+
+(use-package company
+   :ensure t
+   :init
+  (global-company-mode)
+  :bind (("<backtab>" . company-complete-common-or-cycle))
+  )
+
+(use-package cmake-mode
+  :ensure t
+  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
+	 ("\\.cmake\\'" . cmake-mode))
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Elisp packages
+(add-hook 'lisp-mode-hook electric-pair-mode)
+(define-key emacs-lisp-mode-map (kbd "C-c C-e") 'eval-buffer)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; load customize file at the end 
+(setq custom-file "~/.emacs.d/custom.el")
+(load-file custom-file)

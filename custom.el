@@ -11,7 +11,7 @@
  '(custom-enabled-themes '(doom-vibrant))
  '(custom-safe-themes
    '("e2c926ced58e48afc87f4415af9b7f7b58e62ec792659fcb626e8cba674d2065" "4b0e826f58b39e2ce2829fab8ca999bcdc076dec35187bf4e9a4b938cb5771dc" "333958c446e920f5c350c4b4016908c130c3b46d590af91e1e7e2a0611f1e8c5" "8146edab0de2007a99a2361041015331af706e7907de9d6a330a3493a541e5a6" "0d01e1e300fcafa34ba35d5cf0a21b3b23bc4053d388e352ae6a901994597ab1" "835868dcd17131ba8b9619d14c67c127aa18b90a82438c8613586331129dda63" "e8df30cd7fb42e56a4efc585540a2e63b0c6eeb9f4dc053373e05d774332fc13" "97db542a8a1731ef44b60bc97406c1eb7ed4528b0d7296997cbb53969df852d6" default))
- '(display-line-numbers 'visual)
+ '(display-line-numbers t)
  '(electric-pair-mode t)
  '(elpy-rpc-python-command "python3")
  '(elpy-rpc-virtualenv-path "~/.virtualenvs/rpc")
@@ -33,7 +33,7 @@
  '(objed-cursor-color "#ff665c")
  '(org-noter-always-create-frame nil)
  '(package-selected-packages
-   '(treemacs-icons-dired treemacs-projectile projectile treemacs-all-the-icons multiple-cursors multiple-cursor multi-cursor org-download org-attach-screenshot org-bullets org-autolist rainbow-delimiters session doom-themes vterm pdftools org-brain org-pdfview org-noter-pdftools org-pdftools org-noter lsp-treemacs treemacs-magit treemacs lsp-ui yasnippet-snippets lsp-mode flycheck-irony company-irony irony electric-pair-mode helm-config cmake-mode helm flycheck cmake-ide rtags pyenv-mode ox-pandoc markdown-mode magit elpy use-package))
+   '(helm-projectile helm-ag ag whole-line-or-region treemacs-icons-dired treemacs-projectile projectile treemacs-all-the-icons multiple-cursors multiple-cursor multi-cursor org-download org-attach-screenshot org-bullets org-autolist rainbow-delimiters session doom-themes vterm pdftools org-brain org-pdfview org-noter-pdftools org-pdftools org-noter lsp-treemacs treemacs-magit treemacs lsp-ui yasnippet-snippets lsp-mode flycheck-irony company-irony irony electric-pair-mode helm-config cmake-mode helm flycheck cmake-ide rtags pyenv-mode ox-pandoc markdown-mode magit elpy use-package))
  '(package-user-dir "~/.emacs.d/elpa")
  '(pdf-tools-enabled-modes
    '(pdf-history-minor-mode pdf-isearch-minor-mode pdf-links-minor-mode pdf-misc-minor-mode pdf-outline-minor-mode pdf-misc-size-indication-minor-mode pdf-misc-menu-bar-minor-mode pdf-annot-minor-mode pdf-sync-minor-mode pdf-misc-context-menu-minor-mode pdf-cache-prefetch-minor-mode pdf-occur-global-minor-mode pdf-virtual-global-minor-mode))
@@ -41,6 +41,9 @@
  '(python-shell-interpreter "python3")
  '(rustic-ansi-faces
    ["#242730" "#ff665c" "#7bc275" "#FCCE7B" "#51afef" "#C57BDB" "#5cEfFF" "#bbc2cf"])
+ '(safe-local-variable-values
+   '((flycheck-disabled-checkers emacs-lisp-checkdoc)
+     (vc-follow-symlinks . t)))
  '(save-interprogram-paste-before-kill t)
  '(session-use-package t nil (session))
  '(vc-annotate-background "#242730")
@@ -65,6 +68,7 @@
     (cons 340 "#62686E")
     (cons 360 "#62686E")))
  '(vc-annotate-very-old-color nil)
+ '(vc-follow-symlinks 'ask)
  '(warning-minimum-level :error)
  '(which-key-mode t)
  '(x-select-enable-clipboard-manager t))

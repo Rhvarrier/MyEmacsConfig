@@ -1,8 +1,10 @@
 #+TITLE: My Emacs Settings
 #+AUTHOR: Rahul Hari
 #+LANGUAGE: 'en'
+#+STARTUP: overview
 * Initialisations
 ** Messages buffer customisation
+   First step is to add timestamp to Message buffer
    #+begin_src emacs-lisp
      (defun sh/current-time-microseconds ()
        "Return the current time formatted to include microseconds."
@@ -30,6 +32,14 @@
 *** Setting Emacs user directory. This directory contains all the settings as well as the elpa packages installed by Emacs
     #+BEGIN_SRC emacs-lisp
       (setq user-emacs-directory (file-truename "~/.emacs.d"))
+    #+END_SRC
+*** Loading custom user functions
+    #+BEGIN_SRC emacs-lisp
+      (defvar custom-functions-file)
+      (setq custom-functions-file "~/.emacs.d/custom-functions.el")
+      (load-file custom-functions-file)
+      
+      (add-hook 'after-init-hook 'load-customization-file)
     #+END_SRC
 ** Inialialize packages
    Setting packages.el and its archieves. After adding achieve URL, the package cache needs to be refreshed.
@@ -66,7 +76,7 @@
 	     (package-install package)))
     #+end_src
 
-* Global settings
+* General Global settings
 ** Session Management
    Session package allows to keep persist data between sessions. For more info http://emacs-session.sourceforge.net/
       #+begin_src emacs-lisp
@@ -83,12 +93,59 @@
      (defalias 'yes-or-no-p 'y-or-n-p)
    #+end_src
 *** Define Global keyboard shortcuts
-**** TODO: F12 : Open init org file from any buffer
+**** Open init org file from any buffer
      #+begin_src emacs-lisp
-       (global-set-key (kbd "<f12>") (lambda () (interactive) (find-file user-init-file)))
+       (global-set-key (kbd "<f12>") (lambda () (interactive) (find-file (file-truename "~/.emacs.d/MyConfig.org"))))
      #+end_src
-** Aesthetic
-*** Themes
+     Evaluate init file from any buffer
+     #+BEGIN_SRC emacs-lisp
+       (global-set-key (kbd "M-<f12>") (lambda () (interactive) (load-file (file-truename "~/.emacs.d/init.el"))))
+     #+END_SRC
+**** Shortcuts for Full size keyboard
+     - Keypad Enter key behaves the same way as the normal Enter key
+     #+BEGIN_SRC emacs-lisp
+       (global-set-key (kbd "<kp-enter>") (kbd "RET"))
+     #+END_SRC
+**** Convenience Shortcuts
+     - Esc key cancels all, replaces C-g keybinding
+       #+BEGIN_SRC emacs-lisp
+	;; Esc cancels all
+	(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+				    
+       #+END_SRC
+    
+     - Copy/Cut current line without selection
+       #+BEGIN_SRC emacs-lisp
+	 (use-package whole-line-or-region
+	   :ensure t
+	   :config
+	   (whole-line-or-region-global-mode))
+	 
+       #+END_SRC
+*** Complemetary Tools
+    Ag tool for searching. Needs silversearcher-ag to be installed
+    #+BEGIN_SRC emacs-lisp
+      (use-package ag
+      :ensure t
+      )
+    #+END_SRC
+*** Help functions
+    #+BEGIN_SRC emacs-lisp
+      (use-package which-key
+	:ensure t
+	:config
+	(which-key-mode)
+	)	   
+    #+END_SRC
+* Aesthetic
+** Disabling unwanted features
+    - Disabling menu bar and tool bar so that Emacs can cover a maximum space
+    #+BEGIN_SRC emacs-lisp
+      ;; Disabling menu bar and tool bar
+      (menu-bar-mode -1)
+      (tool-bar-mode -1)
+    #+END_SRC
+** Themes
     Adding Doom Themes with support for org mode and Treemacs. This theme should later be selected in the ~customize-theme~ option 
     #+begin_src emacs-lisp
       (use-package doom-themes
@@ -107,188 +164,267 @@
 	;; Corrects (and improves) org-mode's native fontification.
 	(doom-themes-org-config))
     #+end_src
-    
-;;(setq custom-functions-file "~/.emacs.d/custom-functions.el")
-;;(load-file custom-functions-file)
-
-
-** Autocomplete
-*** Helm Config
+ 
+* Autocomplete
+** Helm Config
     Helm config for autocomplete with find-file, M-x integations
+    #+begin_src emacs-lisp
+	    (use-package helm
+	    :preface (require 'helm-config)
+	    :ensure t
+	    :bind
+	    (("M-x" . helm-M-x)
+	     ("C-x C-f" . helm-find-files)
+	     ("C-x b" . helm-buffers-list)
+	     :map helm-map
+	     ("C-j" . helm-next-line)
+	     ("C-k" . helm-previous-line)
+	     )
+	    )
+    #+end_src
+    Helm Ag integration
     #+BEGIN_SRC emacs-lisp
-      ;; Helm autocomplete
-      (use-package helm
-	:preface (require 'helm-config)
+      (use-package helm-ag
 	:ensure t
-	:bind
-	(("M-x" . helm-M-x)
-	 ("C-x C-f" . helm-find-files)
-	 ("C-x b" . helm-buffers-list)
-	 :map helm-map
-	 ("C-j" . helm-next-line)
-	 ("C-k" . helm-previous-line))
+	:after helm
 	)
     #+END_SRC
-Yasnippet for autocompleting snippets
-   #+BEGIN_SRC emacs-lisp
+** Auto insert snippets with YaSnippet
+   #+begin_src emacs-lisp
      (use-package yasnippet
-       :ensure t
-       :config
-       (use-package yasnippet-snippets
-	 :ensure t)
-       (yas-global-mode t)
-       (define-key yas-minor-mode-map (kbd "<tab>") nil)
-       (define-key yas-minor-mode-map (kbd "C-<tab>") #'yas-expand)
-       ;;(add-to-list #'yas-snippet-dirs "my-personal-snippets")
-       (yas-reload-all)
-       (setq yas-prompt-functions '(yas-ido-prompt))
-       (defun help/yas-after-exit-snippet-hook-fn ()
-	 (prettify-symbols-mode)
-	 (prettify-symbols-mode))
-       (add-hook 'yas-after-exit-snippet-hook #'help/yas-after-exit-snippet-hook-fn)
-       :diminish yas-minor-mode)
-   #+END_SRC
-
-* General Tools
-** Content Visualisation
-*** TODO Treemacs
-    Treemacs package allows viualizing contents in tree view with context specific icons 
-  #+BEGIN_SRC emacs-lisp
-    ;; Treemacs
-    (use-package treemacs
+     :ensure t
+     :config
+     (use-package yasnippet-snippets
+       :ensure t)
+     (yas-global-mode t)
+     (define-key yas-minor-mode-map (kbd "<tab>") nil)
+     (define-key yas-minor-mode-map (kbd "C-<tab>") #'yas-expand)
+     (add-to-list #'yas-snippet-dirs "my-personal-snippets")
+     (yas-reload-all)
+     (setq yas-prompt-functions '(yas-ido-prompt))
+     (defun help/yas-after-exit-snippet-hook-fn ()
+       (prettify-symbols-mode)
+       (prettify-symbols-mode))
+     (add-hook 'yas-after-exit-snippet-hook #'help/yas-after-exit-snippet-hook-fn)
+     :diminish yas-minor-mode)     
+   #+end_src
+** General Autocomplete for programming modes
+   #+begin_src emacs-lisp
+     (use-package company
       :ensure t
       :init
-      :bind
-      (:map global-map
-	    ("M-0"       . treemacs-select-window)
-	    ("C-x t 1"   . treemacs-delete-other-windows)
-	    ("C-x t t"   . treemacs)
-	    ;; ("C-x t B"   . treemacs-bookmark)
-	    ;;("C-x t C-t" . treemacs-find-file)
-	    ;;("C-x t M-t" . treemacs-find-tag))
-	    )
-      )
-  #+END_SRC
-** Terminal
-   Vterm is much better alternative to default Emacs shell and vterm
-   #+BEGIN_SRC emacs-lisp
-     (use-package vterm
-       :ensure t
-       :config
-       (defalias 'sh 'vterm)
+     (global-company-mode)
+     :bind (("<backtab>" . company-complete-common-or-cycle))
      )
+   #+end_src
 
-   #+END_SRC
-** Version Control
-
-   Installing Magit for git integration and adding treemacs integation
+* Project Management
+** Projectile
+   Projectile manages and coordiantes the projects
+   #+begin_src emacs-lisp
+     (use-package projectile
+     :ensure t
+     :init
+     (projectile-mode +1)
+     :bind (:map projectile-mode-map
+		 ("C-c p" . projectile-command-map)
+		 ("C-S-F" . helm-projectile-ag)
+		 )
+     )
+   #+end_src
+   Adding projectile Helm integration
    #+BEGIN_SRC emacs-lisp
-     (use-package magit
+     (use-package helm-projectile
+       :ensure t
+       :after helm projectile
+       :config
+       (helm-projectile-on))
+     
+   #+END_SRC
+** Version control
+   Git Integration 
+ #+begin_src emacs-lisp
+  (use-package magit
+  :ensure t
+  :init
+  :bind
+  (("C-x g" . magit-status)
+   )
+  )
+ #+end_src
+** Visualisation
+   - Treemacs for visualisalizing files in the same fashion as in Vscode
+   #+begin_src emacs-lisp
+     ;; Treemacs
+     (use-package treemacs
+       :ensure t
+       :bind
+       ("C-c t t" . treemacs)
+       ("C-c t a" . treemacs-add-and-display-current-project)
+       )
+     #+end_src
+   - Treemacs additional packages
+     - Projectile integration
+       #+begin_src emacs-lisp
+	 (use-package treemacs-projectile
+	  :after (treemacs projectile)
+	  :ensure t)
+       #+end_src
+     - Dired mode integations
+      #+begin_src emacs-lisp
+	(use-package treemacs-icons-dired
+	  :hook (dired-mode . treemacs-icons-dired-mode)
+	  :ensure t)
+      #+end_src
+     - Magit integration
+      #+begin_src emacs-lisp
+	(use-package treemacs-magit
+	  :after (treemacs magit)
+	  :ensure t)	
+      #+end_src
+     - Treemacs icons
+       #+begin_src emacs-lisp
+	 (use-package treemacs-all-the-icons
+	  :ensure t
+	  :after treemacs
+	  :config
+	  (treemacs-load-theme "all-the-icons")
+	  )
+       #+end_src
+* Terminal emulation
+  Vterm is a super fast terminal emulation
+  #+begin_src emacs-lisp
+    (use-package vterm
+      :ensure t
+      :config
+      (defalias 'sh 'vterm)
+    )
+  #+end_src
+* Documentation
+** Markdown
+   #+begin_src emacs-lisp
+     ;; install markdown mode for emacs
+     (use-package markdown-mode
+       :ensure t
+       :commands (markdown-mode gfm-mode)
+       :mode (("README\\.md\\'" . gfm-mode)
+	      ("\\.md\\'" . markdown-mode)
+	      ("\\.markdown\\'" . markdown-mode))
+       :init (setq markdown-command "pandoc"))
+   #+end_src
+** PDF tools
+   #+begin_src emacs-lisp
+     (use-package pdf-tools
+     :ensure t
+     :config
+     (pdf-tools-install)
+     (setq-default pdf-view-display-size 'fit-page)
+     (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+   #+end_src
+** Org mode
+*** General org mode settings
+    #+begin_src emacs-lisp
+     (use-package org
+     :hook
+     (org-mode . visual-line-mode)
+     :config
+     (setq org-startup-indented nil)
+     (setq org-startup-numerated t)
+     (setq org-image-actual-width (list 200))
+     )
+   #+end_src
+
+*** Additional packages
+**** Taking notes
+     #+begin_src emacs-lisp
+       (use-package org-noter
+       :ensure t
+       :bind
+       ("C-c n" . org-noter)
+       :mode
+       ("\\.pdf\\'" . org-noter-mode)
+       )
+     #+end_src
+**** Inserting images
+     #+begin_src emacs-lisp
+       (use-package org-download
+	 :ensure t
+	 :hook
+	 (org-mode . org-download-enable)
+	 :bind
+	 ("<f6> y" . org-download-clipboard)
+       )
+     #+end_src
+**** Bullet icons
+     #+begin_src emacs-lisp
+       (use-package org-bullets
+       :ensure t
+       :hook
+       (org-mode . org-bullets-mode)
+       )
+     #+end_src
+* Programming
+** General settins
+*** Electric pair
+    Prog mode hooks
+    #+BEGIN_SRC emacs-lisp
+     (add-hook 'c-mode-hook  electric-pair-mode)
+      (add-hook 'c++-mode-hook  electric-pair-mode)
+      (add-hook 'lisp-mode-hook electric-pair-mode)
+    #+END_SRC
+** LSP mode
+   LSP is used to manage all IDE realted functionalities
+   #+BEGIN_SRC emacs-lisp
+     (use-package lsp-mode
        :ensure t
        :init
-       :bind
-       (("C-x g" . magit-status)
-	)
+       (setq lsp-keymap-prefix "C-c l")
+       :hook (
+	      ;;(prog-mode . lsp)
+	      (c-mode . lsp)
+	      (c++-mode . lsp)
+	      (lsp-mode . lsp-enable-which-key-integration)
+	      )
+       :commands lsp
        )
-
-     (use-package treemacs-magit
-       :after (treemacs magit)
-       :ensure t)
-#+END_SRC
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Orgmode
-
-(use-package org
-  )
-
-(use-package org-noter
-  :ensure t
-  :bind
-  ("C-c n" . org-noter)
-  )
-
-(use-package pdf-tools
-  :ensure t
-  :config
-  (pdf-tools-install)
-  (setq-default pdf-view-display-size 'fit-page)
-  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Documentation
-
-;; install markdown mode for emacs
-(use-package markdown-mode
-  :ensure t
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-	 ("\\.md\\'" . markdown-mode)
-	 ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "pandoc"))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Programming
-(add-hook 'prog-mode-hook show-paren-mode)
-(add-hook 'prog  electric-pair-mode)
-
-(use-package flycheck
-  :ensure t
-  :init
-  (global-flycheck-mode)
-  )
-
-
-;; Python packages
-
-;; install elpy package for python
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable))
-
-;; C++
-(use-package lsp-mode
-  :ensure t
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (
-	 (c-mode . lsp)
-	 (c++-mode . lsp)
-	 (lsp-mode . lsp-enable-which-key-integration)
-	 )
-  :commands lsp
-  )
-
-(use-package lsp-ui :commands lsp-ui-mode)
-(use-package lsp-ui :commands lsp-ui-mode)
-(use-package lsp-treemacs
-  :ensure t
-  :commands lsp-treemacs-errors-list)
-(use-package which-key
-  :ensure t
-  :config
-  (which-key-mode))
-
-(use-package company
-   :ensure t
-   :init
-  (global-company-mode)
-  :bind (("<backtab>" . company-complete-common-or-cycle))
-  )
-
-(use-package cmake-mode
-  :ensure t
-  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
-	 ("\\.cmake\\'" . cmake-mode))
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Elisp packages
-(add-hook 'lisp-mode-hook electric-pair-mode)
-(define-key emacs-lisp-mode-map (kbd "C-c C-e") 'eval-buffer)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; load customize file at the end 
-(setq custom-file "~/.emacs.d/custom.el")
-(load-file custom-file)
+     
+     (use-package lsp-ui
+       :ensure t
+       :commands lsp-ui-mode)
+     
+   #+END_SRC
+   LSP treemacs integration
+   #+BEGIN_SRC emacs-lisp
+     (use-package lsp-treemacs
+	    :ensure t
+	    :after treemacs lsp
+	    :commands lsp-treemacs-errors-list)	       
+   #+END_SRC
+** Autocomplete
+   Autocomplete using company mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package company
+	     :ensure t
+	     :init
+	    (global-company-mode)
+	    :bind (("<backtab>" . company-complete-common-or-cycle))
+	    )
+   #+END_SRC
+** Language Specific
+*** Python
+    Elpy to manage Python IDE integration instead of LSP
+   #+BEGIN_SRC emacs-lisp
+     (use-package elpy
+       :ensure t
+       :init
+       (elpy-enable))
+   #+END_SRC
+*** CMake
+    #+BEGIN_SRC emacs-lisp
+      (use-package cmake-mode
+	:ensure t
+	:mode (("CMakeLists\\.txt\\'" . cmake-mode)
+	       ("\\.cmake\\'" . cmake-mode))
+	)
+      
+    #+END_SRC

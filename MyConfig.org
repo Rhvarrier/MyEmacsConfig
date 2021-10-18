@@ -386,6 +386,8 @@
 	      (lsp-mode . lsp-enable-which-key-integration)
 	      )
        :commands lsp
+       :bind
+       ("<f2>" . lsp-find-definition)
        )
      
      (use-package lsp-ui

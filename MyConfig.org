@@ -86,6 +86,18 @@
 		(add-hook 'after-init-hook 'session-initialize)
 	)
       #+end_src
+      Recent files packages
+      #+begin_src emacs-lisp
+	(use-package recentf
+	  :config
+	  (progn (setq recentf-auto-cleanup 'never
+		       recentf-max-menu-items 50
+		       recentf-max-saved-items 400
+		       )
+	  (recentf-mode +1))
+	  )
+      #+end_src
+      
 ** Conveniences
 *** Aliases
 **** Replace ~yes or no~ with the shorter version ~y or n~
@@ -115,13 +127,34 @@
        #+END_SRC
     
      - Copy/Cut current line without selection
-       #+BEGIN_SRC emacs-lisp
-	 (use-package whole-line-or-region
+      #+BEGIN_SRC emacs-lisp
+	(use-package whole-line-or-region
+	  :ensure t
+	  :config
+	  (whole-line-or-region-global-mode))
+	
+       #+END_SRC 
+     - Multiple cursors
+       #+begin_src emacs-lisp
+	 (use-package multiple-cursors
 	   :ensure t
-	   :config
-	   (whole-line-or-region-global-mode))
+	   :bind
+	   ("C-S-c C-S-c" . mc/edit-lines)
+	   )
 	 
-       #+END_SRC
+       #+end_src
+**** Undo tree
+     #+begin_src emacs-lisp
+       (use-package undo-tree
+	 :ensure t
+	 :bind
+	 (("C-z" . undo-tree-undo)
+	  ("C-x z" . undo-tree-visualize)
+	  ("M-z" . undo-tree-redo))
+	 :config
+	 (global-undo-tree-mode)
+	 )
+     #+end_src
 *** Complemetary Tools
     Ag tool for searching. Needs silversearcher-ag to be installed
     #+BEGIN_SRC emacs-lisp
@@ -138,12 +171,17 @@
 	)	   
     #+END_SRC
 * Aesthetic
+** Enabling VSCode like features
+   #+begin_src emacs-lisp
+     (global-tab-line-mode)
+   #+end_src
 ** Disabling unwanted features
     - Disabling menu bar and tool bar so that Emacs can cover a maximum space
     #+BEGIN_SRC emacs-lisp
       ;; Disabling menu bar and tool bar
       (menu-bar-mode -1)
       (tool-bar-mode -1)
+      (put 'suspend-frame 'disabled t)
     #+END_SRC
 ** Themes
     Adding Doom Themes with support for org mode and Treemacs. This theme should later be selected in the ~customize-theme~ option 
@@ -238,7 +276,12 @@
        :ensure t
        :after helm projectile
        :config
-       (helm-projectile-on))
+       (helm-projectile-on)
+       :bind
+       (:map projectile-mode-map
+	     ("C-c C-f" . helm-projectile-find-file)
+	     )
+       )
      
    #+END_SRC
 ** Version control
@@ -388,7 +431,9 @@
        :commands lsp
        :bind
        ("<f2>" . lsp-find-definition)
+       ("<f5>" . lsp-format-buffer)
        )
+     
      
      (use-package lsp-ui
        :ensure t
@@ -413,6 +458,12 @@
 	    )
    #+END_SRC
 ** Language Specific
+*** C++
+    Disable clangd automatic header adding
+    #+begin_src emacs-lisp
+      (setq lsp-clients-clangd-args
+    '("--header-insertion=never"))
+    #+end_src
 *** Python
     Elpy to manage Python IDE integration instead of LSP
    #+BEGIN_SRC emacs-lisp

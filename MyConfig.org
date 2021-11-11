@@ -43,14 +43,14 @@
     #+END_SRC
 ** Inialialize packages
    Setting packages.el and its archieves. After adding achieve URL, the package cache needs to be refreshed.
-    #+begin_src lisp
+    #+begin_src emacs-lisp
       (require 'package)
       (add-to-list 'package-archives
-		   '("melpa" . "https://melpa.org/packages/") t)
+		   '("melpa" . "https://melpa.org/packages/"))
       (add-to-list 'package-archives
 		   '("gnu" . "http://elpa.gnu.org/packages/"))
       (add-to-list 'package-archives
-		   '("org" . "http://orgmode.org/elpa/") t)
+		   '("org" . "http://orgmode.org/elpa/"))
       ;; Comment/uncomment this line to enable MELPA Stable if desired.  See `package-archive-priorities`
       ;; and `package-pinned-packages`. Most users will not need or want to do this.
       (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
@@ -97,7 +97,14 @@
 	  (recentf-mode +1))
 	  )
       #+end_src
-      
+      Save scratch buffer between session
+      #+begin_src emacs-lisp
+	(use-package persistent-scratch
+	:ensure t
+	:init
+	(persistent-scratch-setup-default)
+	)
+      #+end_src
 ** Conveniences
 *** Aliases
 **** Replace ~yes or no~ with the shorter version ~y or n~
@@ -131,17 +138,21 @@
 	(use-package whole-line-or-region
 	  :ensure t
 	  :config
-	  (whole-line-or-region-global-mode))
+	  (whole-line-or-region-global-mode)
+	  )
 	
        #+END_SRC 
      - Multiple cursors
        #+begin_src emacs-lisp
 	 (use-package multiple-cursors
 	   :ensure t
-	   :bind
-	   ("C-S-c C-S-c" . mc/edit-lines)
-	   )
-	 
+	   :bind (
+		  ("C->" 	. mc/mark-next-like-this)
+		  ("C-<" 	. mc/mark-previous-like-this)
+		  ("C-c C-<"    . mc/mark-all-like-this)
+		  ("C-S-c C-S-c". mc/edit-lines)
+		  )
+	   )   
        #+end_src
 **** Undo tree
      #+begin_src emacs-lisp
@@ -481,3 +492,6 @@
 	)
       
     #+END_SRC
+
+
+

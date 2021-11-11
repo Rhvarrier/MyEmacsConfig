@@ -33,7 +33,7 @@
  '(objed-cursor-color "#ff665c")
  '(org-noter-always-create-frame nil)
  '(package-selected-packages
-   '(persistent-scratch evil multiple-cursors yasnippet-snippets whole-line-or-region which-key vterm use-package undo-tree treemacs-projectile treemacs-magit treemacs-icons-dired treemacs-all-the-icons session rainbow-delimiters org-noter-pdftools org-download org-bullets org-brain org-autolist org-attach-screenshot modus-themes lsp-ui lsp-treemacs helm-projectile helm-ag flycheck elpy doom-themes cmake-mode ag))
+   '(centaur-tabs persistent-scratch evil multiple-cursors yasnippet-snippets whole-line-or-region which-key vterm use-package undo-tree treemacs-projectile treemacs-magit treemacs-icons-dired treemacs-all-the-icons session rainbow-delimiters org-noter-pdftools org-download org-bullets org-brain org-autolist org-attach-screenshot modus-themes lsp-ui lsp-treemacs helm-projectile helm-ag flycheck elpy doom-themes cmake-mode ag))
  '(package-user-dir "~/.emacs.d/elpa")
  '(pdf-tools-enabled-modes
    '(pdf-history-minor-mode pdf-isearch-minor-mode pdf-links-minor-mode pdf-misc-minor-mode pdf-outline-minor-mode pdf-misc-size-indication-minor-mode pdf-misc-menu-bar-minor-mode pdf-annot-minor-mode pdf-sync-minor-mode pdf-misc-context-menu-minor-mode pdf-cache-prefetch-minor-mode pdf-occur-global-minor-mode pdf-virtual-global-minor-mode))

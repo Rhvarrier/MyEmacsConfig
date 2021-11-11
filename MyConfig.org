@@ -184,7 +184,23 @@
 * Aesthetic
 ** Enabling VSCode like features
    #+begin_src emacs-lisp
-     (global-tab-line-mode)
+		    (use-package centaur-tabs
+		      :ensure t
+		      :init
+		      (setq centaur-tabs-height 32
+			    centaur-tabs-style "box"
+			    centaur-tabs-set-icons t
+			    centaur-tabs-set-modified-marker t
+			    centaur-tabs-show-navigation-buttons t
+			    centaur-tabs-show-navigation-buttons t)
+			    ;; Note: If you're not using Spacmeacs, in order for the underline to display
+			    ;; correctly you must add the following line:
+		      (centaur-tabs-mode t)
+
+		      :bind
+		      ("C-<prior>" . centaur-tabs-backward)
+		      ("C-<next>" . centaur-tabs-forward)
+		      )
    #+end_src
 ** Disabling unwanted features
     - Disabling menu bar and tool bar so that Emacs can cover a maximum space

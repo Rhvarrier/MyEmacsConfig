@@ -3,3 +3,10 @@
 *[#]*
 *~
 /init-org.el
+elpa/*
+/helm-adaptive-history
+*.eld
+/recentf
+.*
+!.gitignore
+/MyConfig.el

@@ -1,6 +1,6 @@
 (defun load-customization-file ()
 ;; load customize file at the end 
-  (setq custom-file "~/.emacs.d/custom.el")
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (load-file custom-file)
   )
 

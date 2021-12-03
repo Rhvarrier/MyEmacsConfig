@@ -29,14 +29,10 @@
      (advice-add 'message :before 'sh/ad-timestamp-message)
    #+end_src
 ** User directories and user files
-*** Setting Emacs user directory. This directory contains all the settings as well as the elpa packages installed by Emacs
-    #+BEGIN_SRC emacs-lisp
-      (setq user-emacs-directory (file-truename "~/.emacs.d"))
-    #+END_SRC
 *** Loading custom user functions
     #+BEGIN_SRC emacs-lisp
       (defvar custom-functions-file)
-      (setq custom-functions-file "~/.emacs.d/custom-functions.el")
+      (setq custom-functions-file (expand-file-name "custom-functions.el" user-emacs-directory))
       (load-file custom-functions-file)
       
       (add-hook 'after-init-hook 'load-customization-file)
@@ -114,11 +110,11 @@
 *** Define Global keyboard shortcuts
 **** Open init org file from any buffer
      #+begin_src emacs-lisp
-       (global-set-key (kbd "<f12>") (lambda () (interactive) (find-file (file-truename "~/.emacs.d/MyConfig.org"))))
+       (global-set-key (kbd "<f12>") (lambda () (interactive) (find-file (expand-file-name "MyConfig.org" user-emacs-directory))))
      #+end_src
      Evaluate init file from any buffer
      #+BEGIN_SRC emacs-lisp
-       (global-set-key (kbd "M-<f12>") (lambda () (interactive) (load-file (file-truename "~/.emacs.d/init.el"))))
+       (global-set-key (kbd "M-<f12>") (lambda () (interactive) (load-file (expand-file-name "init.el" user-emacs-directory))))
      #+END_SRC
 **** Shortcuts for Full size keyboard
      - Keypad Enter key behaves the same way as the normal Enter key

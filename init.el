@@ -1,6 +1,6 @@
 (require 'org)
 (setq vc-follow-symlinks 2)
-(org-babel-load-file "~/.emacs.d/MyConfig.org")
+(org-babel-load-file (expand-file-name "MyConfig.org" user-emacs-directory))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
